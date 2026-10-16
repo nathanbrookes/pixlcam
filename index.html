@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>PIXLCAM</title>
+  <meta name="description" content="Glitch camera: pixel sort, RGB split, pixelate, VHS, dither and more, live.">
+  <meta name="theme-color" content="#07070a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PIXLCAM">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand" aria-label="PIXLCAM"><span>PIXL</span><span>CAM</span></div>
+      <div class="top-actions">
+        <button id="btn-aspect" class="pill" aria-label="Aspect ratio">3:4</button>
+        <button id="btn-import" class="icon-btn" aria-label="Open a photo">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+        </button>
+        <button id="btn-flip" class="icon-btn" aria-label="Switch camera">
+          <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9.5 13.5a2.5 2.5 0 0 0 5 0"/><path d="M14.5 13.5l1-1M14.5 13.5l-1-1"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><rect x="14" y="5" width="4" height="4"/><rect x="8" y="15" width="4" height="4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+      <div class="viewport" id="viewport">
+        <canvas id="view"></canvas>
+        <div class="flash" id="flash"></div>
+        <div class="badge" id="badge-compare" hidden>ORIGINAL</div>
+        <button class="badge badge-live" id="btn-live" hidden>● BACK TO CAMERA</button>
+      </div>
+
+      <div class="message" id="message" hidden>
+        <p class="message-title" id="message-title">Camera unavailable</p>
+        <p class="message-body" id="message-body"></p>
+        <div class="message-actions">
+          <button class="btn" id="msg-retry">Try again</button>
+          <button class="btn" id="msg-import">Open a photo</button>
+          <button class="btn ghost" id="msg-demo">Use demo image</button>
+        </div>
+      </div>
+
+      <section class="panel" id="panel" hidden>
+        <header class="panel-head">
+          <span class="panel-title" id="panel-title"></span>
+          <label class="switch" id="panel-switch-wrap">
+            <input type="checkbox" id="panel-switch" aria-label="Effect on">
+            <span></span>
+          </label>
+          <button class="icon-btn small" id="panel-reset" aria-label="Reset effect">
+            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
+          </button>
+          <button class="icon-btn small" id="panel-close" aria-label="Close panel">
+            <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </header>
+        <div class="panel-body" id="panel-body"></div>
+      </section>
+    </main>
+
+    <nav class="chips" id="chips" aria-label="Effects"></nav>
+
+    <footer class="dock">
+      <button id="btn-last" class="thumb" aria-label="Last photo"></button>
+      <button id="btn-shutter" class="shutter" aria-label="Take photo"><span></span></button>
+      <button id="btn-random" class="icon-btn big" aria-label="Random look">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.3" class="fill"/><circle cx="16" cy="8" r="1.3" class="fill"/><circle cx="12" cy="12" r="1.3" class="fill"/><circle cx="8" cy="16" r="1.3" class="fill"/><circle cx="16" cy="16" r="1.3" class="fill"/></svg>
+      </button>
+    </footer>
+  </div>
+
+  <div class="review" id="review" hidden>
+    <div class="review-img"><img id="review-img" alt="Captured photo"></div>
+    <p class="review-hint" id="review-hint"></p>
+    <div class="review-actions">
+      <button class="btn ghost" id="review-close">Back</button>
+      <button class="btn primary" id="review-save">Save</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="settings" hidden>
+    <div class="sheet-card">
+      <header class="sheet-head">
+        <span>Settings</span>
+        <button class="icon-btn small" id="settings-close" aria-label="Close settings">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="sheet-body" id="settings-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <video id="video" playsinline muted autoplay></video>
+  <input type="file" id="file" accept="image/*" hidden>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
