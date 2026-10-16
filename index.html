@@ -20,14 +20,14 @@
     <header class="topbar">
       <div class="brand" aria-label="PIXLCAM"><span>PIXL</span><span>CAM</span></div>
       <div class="top-actions">
-        <button id="btn-aspect" class="pill" aria-label="Aspect ratio">3:4</button>
-        <button id="btn-import" class="icon-btn" aria-label="Open a photo">
+        <button id="btn-aspect" class="pill lock-when-rec" aria-label="Aspect ratio">3:4</button>
+        <button id="btn-import" class="icon-btn lock-when-rec" aria-label="Open a photo">
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
         </button>
         <button id="btn-flip" class="icon-btn" aria-label="Switch camera">
           <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9.5 13.5a2.5 2.5 0 0 0 5 0"/><path d="M14.5 13.5l1-1M14.5 13.5l-1-1"/></svg>
         </button>
-        <button id="btn-settings" class="icon-btn" aria-label="Settings">
+        <button id="btn-settings" class="icon-btn lock-when-rec" aria-label="Settings">
           <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><rect x="14" y="5" width="4" height="4"/><rect x="8" y="15" width="4" height="4"/></svg>
         </button>
       </div>
@@ -38,7 +38,9 @@
         <canvas id="view"></canvas>
         <div class="flash" id="flash"></div>
         <div class="badge" id="badge-compare" hidden>ORIGINAL</div>
-        <button class="badge badge-live" id="btn-live" hidden>● BACK TO CAMERA</button>
+        <button class="badge badge-live lock-when-rec" id="btn-live" hidden>● BACK TO CAMERA</button>
+        <div class="badge badge-rec" id="badge-rec" hidden><i></i><span id="rec-time">0:00</span></div>
+        <div class="zoom" id="zoom" aria-label="Zoom"></div>
       </div>
 
       <div class="message" id="message" hidden>
@@ -72,16 +74,28 @@
     <nav class="chips" id="chips" aria-label="Effects"></nav>
 
     <footer class="dock">
-      <button id="btn-last" class="thumb" aria-label="Last photo"></button>
+      <div class="mode-switch lock-when-rec" id="mode-switch">
+        <button data-mode="photo">Photo</button>
+        <button data-mode="video">Video</button>
+      </div>
+      <button id="btn-last" class="thumb lock-when-rec" aria-label="Last capture"></button>
       <button id="btn-shutter" class="shutter" aria-label="Take photo"><span></span></button>
-      <button id="btn-random" class="icon-btn big" aria-label="Random look">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.3" class="fill"/><circle cx="16" cy="8" r="1.3" class="fill"/><circle cx="12" cy="12" r="1.3" class="fill"/><circle cx="8" cy="16" r="1.3" class="fill"/><circle cx="16" cy="16" r="1.3" class="fill"/></svg>
-      </button>
+      <div class="dock-actions">
+        <button id="btn-reset" class="icon-btn big" aria-label="Reset all effects">
+          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
+        </button>
+        <button id="btn-random" class="icon-btn big" aria-label="Random look">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.3" class="fill"/><circle cx="16" cy="8" r="1.3" class="fill"/><circle cx="12" cy="12" r="1.3" class="fill"/><circle cx="8" cy="16" r="1.3" class="fill"/><circle cx="16" cy="16" r="1.3" class="fill"/></svg>
+        </button>
+      </div>
     </footer>
   </div>
 
   <div class="review" id="review" hidden>
-    <div class="review-img"><img id="review-img" alt="Captured photo"></div>
+    <div class="review-img">
+      <img id="review-img" alt="Captured photo">
+      <video id="review-video" playsinline loop controls hidden></video>
+    </div>
     <p class="review-hint" id="review-hint"></p>
     <div class="review-actions">
       <button class="btn ghost" id="review-close">Back</button>

@@ -32,11 +32,12 @@ void main() {
 }`;
 
 // Centered crop of a srcW×srcH image to the target aspect, in uv space.
-export function cropFor(srcW, srcH, aspect) {
+// zoom > 1 crops further into the center (digital zoom).
+export function cropFor(srcW, srcH, aspect, zoom = 1) {
   const sa = srcW / srcH;
-  if (sa > aspect) { const w = aspect / sa; return [(1 - w) / 2, 0, w, 1]; }
-  const h = sa / aspect;
-  return [0, (1 - h) / 2, 1, h];
+  const [w, h] = sa > aspect ? [aspect / sa, 1] : [1, sa / aspect];
+  const z = Math.max(1, zoom);
+  return [(1 - w / z) / 2, (1 - h / z) / 2, w / z, h / z];
 }
 
 export class Renderer {
@@ -86,7 +87,7 @@ export class Renderer {
   }
 
   // Render the chain into ping-pong pair `pp` (w×h). Returns the target holding the result.
-  // opts: { state, time, mirror, aspect, bypass, sortMax }
+  // opts: { state, time, mirror, zoom, bypass, sortMax }
   renderChain(pp, w, h, opts) {
     const gl = this.gl;
     const common = { u_res: [w, h], u_time: opts.time, u_scale: Math.min(w, h) / 1000 };
@@ -95,7 +96,7 @@ export class Renderer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, pp[0].fb);
     this.srcProg.use().set({
       ...common, u_src: this.srcTex,
-      u_crop: cropFor(this.srcW, this.srcH, w / h), u_mirror: opts.mirror ? 1 : 0,
+      u_crop: cropFor(this.srcW, this.srcH, w / h, opts.zoom), u_mirror: opts.mirror ? 1 : 0,
     });
     this.draw();
 

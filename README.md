@@ -19,10 +19,14 @@ Each effect has an **Intensity** slider plus its own options. Tap an effect chip
 | **Color** | hue, saturation, contrast, brightness, solarize, channel swap, invert |
 
 Other features:
+- **Photo / Video**: switch above the shutter. Video records the filtered view live (MP4 where supported), with optional microphone sound. Effects can be changed while recording.
+- **Zoom & lenses**: pinch the picture, or tap the zoom buttons. On iPhones with several lenses you get `.5 / 1× / TELE` buttons that switch the physical camera. Elsewhere it uses the phone's hardware zoom when the browser allows it, otherwise a digital zoom.
+- **↺ button**: resets every effect in one tap, with **Undo**.
 - **Looks**: one-tap presets (VHS Tape, Melt, Shatter, 8-Bit, Corrupt, Vapor, Arcade, 1-Bit, Heat).
 - **🎲 button**: random look.
 - **Hold the picture**: shows the original, so you can compare.
-- **Open a photo**: applies the effects to a picture from your library.
+- **Open a photo**: applies the effects to a picture from your library (you can record a video of a photo with animated effects too).
+- **Portrait and landscape**: turn the phone sideways and the controls move to the side; the frame flips with it (3:4 becomes 4:3).
 - Frame shapes 3:4, 1:1, 9:16 and 4:3; JPG or PNG; export up to 4096 px.
 - Your settings are remembered between visits.
 
@@ -56,9 +60,9 @@ Open the https URL it prints on your phone.
 - **iPhone (Safari)**: Share button → **Add to Home Screen**.
 - **Android (Chrome)**: ⋮ menu → **Install app** / **Add to Home screen**.
 
-### Saving photos
-After you take a shot, tap **Save**:
-- **iPhone**: the share sheet opens. Choose **Save Image** to put it in Photos. You can also long-press the picture.
+### Saving photos and videos
+After you take a shot or stop recording, tap **Save**:
+- **iPhone**: the share sheet opens. Choose **Save Image** / **Save Video** to put it in Photos. You can also long-press a picture.
 - **Android**: the share sheet opens. Pick Photos/Gallery, or long-press the picture.
 - **Computer**: the image downloads.
 

@@ -1,7 +1,7 @@
 // Offline support. Network-first so updates show up right away; the cache is the
 // fallback when there's no connection. Bump VERSION to clear old caches.
 
-const VERSION = 'pixlcam-v1';
+const VERSION = 'pixlcam-v2';
 const SHELL = [
   './',
   'index.html',
