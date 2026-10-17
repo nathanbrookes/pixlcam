@@ -84,9 +84,17 @@ js/presets.js         Looks + randomizer
 js/demo.js            built-in test image
 sw.js                 offline support
 manifest.webmanifest  install info for home screen
-tools/make-icons.mjs  regenerates icons/  (node tools/make-icons.mjs)
+tools/icons.mjs       pixel-art icon designs + renderer
+tools/icon-sheet.mjs  labelled comparison sheets → design/
+tools/make-icons.mjs  regenerates icons/ from the chosen design
 tools/serve.mjs       local dev server
 ```
+
+### Changing the app icon
+The icon is pixel art drawn in code (`tools/icons.mjs`). The current one is option **1E** (`split-black`).
+`node tools/icon-sheet.mjs` (or `… split`) renders the comparison sheets in `design/`. To switch icons, set
+`APP_ICON` in `tools/make-icons.mjs` to another design id and run `node tools/make-icons.mjs`. On iPhone,
+remove and re-add the home-screen icon to see the new one.
 
 ### Adding an effect
 In `js/effects.js`, add an entry with `params`, a `uniforms(p)` function and a GLSL `fx(vec2 uv)` that returns a color. Then add its id to `PIPELINE` (the order effects are applied in) and `CHIP_ORDER` (the order chips appear in). The Intensity slider and the controls panel are generated for you.
