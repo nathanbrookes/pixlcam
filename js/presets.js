@@ -17,14 +17,14 @@ export const PRESETS = [
   {
     name: 'Melt',
     fx: {
-      sort: { lo: 30, hi: 95, angle: 90, key: 0 },
+      sort: { mix: 65, tone: 60, streak: 30, angle: 90 },
       rgb: { dist: 10, angle: 90 },
     },
   },
   {
     name: 'Shatter',
     fx: {
-      sort: { lo: 15, hi: 70, angle: 0, span: 35 },
+      sort: { mix: 50, tone: 45, streak: 12, ragged: 80, angle: 0 },
       glitch: { density: 35, size: 80, shift: 25, color: 30, speed: 30 },
     },
   },
@@ -81,7 +81,7 @@ export const PRESETS = [
 const RANDOM = {
   glitch: { chance: 0.45, p: { density: [15, 70], size: [20, 160], shift: [10, 60], color: [0, 70], speed: [0, 70] } },
   rgb: { chance: 0.6, p: { dist: [4, 50] } },
-  sort: { chance: 0.4, p: { lo: [5, 45], hi: [55, 100], span: [20, 100] } },
+  sort: { chance: 0.4, p: { mix: [35, 75], tone: [30, 70], streak: [8, 45], ragged: [20, 90], angle: { pick: [0, 90, 180, 270, 45] }, mask: { pick: [0, 0, 0, 1] } } },
   pixelate: { chance: 0.25, p: { size: [6, 40] } },
   vhs: { chance: 0.3, p: {} },
   dither: { chance: 0.3, p: { pix: [1, 6], levels: [2, 5] } },
@@ -99,9 +99,10 @@ export function randomLook() {
     if (Math.random() > RANDOM[id].chance) continue;
     const p = {};
     for (const def of EFFECTS_BY_ID[id].params) {
-      if (def.id === 'mix') { p.mix = rnd(70, 100); continue; }
       const r = RANDOM[id].p[def.id];
-      if (r) p[def.id] = rnd(r[0], r[1]);
+      if (r?.pick) p[def.id] = r.pick[Math.floor(Math.random() * r.pick.length)];
+      else if (r) p[def.id] = rnd(r[0], r[1]);
+      else if (def.id === 'mix') p.mix = rnd(70, 100);
       else if (def.type === 'range') p[def.id] = rnd(def.min, def.max);
       else if (def.type === 'select') p[def.id] = rnd(0, def.options.length - 1);
       else if (def.type === 'toggle') p[def.id] = Math.random() < 0.15;

@@ -87,7 +87,7 @@ export class Renderer {
   }
 
   // Render the chain into ping-pong pair `pp` (w×h). Returns the target holding the result.
-  // opts: { state, time, mirror, zoom, bypass, sortMax }
+  // opts: { state, time, mirror, zoom, bypass, sortMax (pixel-sort buffer budget, in pixels) }
   renderChain(pp, w, h, opts) {
     const gl = this.gl;
     const common = { u_res: [w, h], u_time: opts.time, u_scale: Math.min(w, h) / 1000 };
@@ -110,7 +110,8 @@ export class Renderer {
       const out = pp[1 - cur];
       const mix = s.p.mix / 100;
       if (fx.custom === 'sort') {
-        this.sort.render(pp[cur].tex, out, s.p, common, mix, opts.sortMax, this.draw);
+        // For the sort, Intensity means how much gets sorted, not opacity.
+        this.sort.render(pp[cur].tex, out, s.p, common, opts.sortMax, this.draw);
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, out.fb);
         gl.viewport(0, 0, w, h);

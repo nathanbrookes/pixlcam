@@ -22,14 +22,16 @@ const ASPECTS = [
   { label: '9:16', v: 9 / 16 },
   { label: '4:3', v: 4 / 3 },
 ];
-// Preview long-edge cap and pixel-sort buffer cap per quality level.
+// Preview long-edge cap per quality level.
 const QUALITY = {
-  low: { label: 'Low', edge: 640, sort: 256 },
-  med: { label: 'Medium', edge: 960, sort: 512 },
-  high: { label: 'High', edge: 1440, sort: 1024 },
+  low: { label: 'Low', edge: 640 },
+  med: { label: 'Medium', edge: 960 },
+  high: { label: 'High', edge: 1440 },
 };
 const EXPORT = { std: { label: 'Standard', edge: 2048 }, max: { label: 'Max', edge: 4096 } };
-const EXPORT_SORT_MAX = 2048;
+// GPU memory budget for the pixel sort's working buffer (in pixels). Always sorts real
+// pixels; images bigger than this (large exports) are sorted in bands.
+const SORT_MAX = 2048 * 2048;
 const EXPORT_MIN_EDGE = 1440; // digitally zoomed shots are scaled up to at least this
 const DIGITAL_ZOOM_MAX = 8;
 const MAX_RECORD_MS = 5 * 60 * 1000;
@@ -67,6 +69,9 @@ function loadState() {
         const f = saved.fx?.[id];
         if (!f) continue;
         s.fx[id].on = !!f.on;
+        // Settings saved before the pixel-sort rework used Intensity as opacity (usually 100,
+        // which now means "sort almost everything"), so start that effect from its defaults.
+        if (id === 'sort' && f.p && !('tone' in f.p)) continue;
         for (const pid in s.fx[id].p) if (f.p && pid in f.p) s.fx[id].p[pid] = f.p[pid];
       }
     }
@@ -385,7 +390,7 @@ function tick(now) {
   if (!render || !renderer.hasSource) return;
   time = (now - t0) / 1000;
   const [w, h] = previewSize();
-  renderer.renderPreview(w, h, frameOpts(QUALITY[state.quality].sort));
+  renderer.renderPreview(w, h, frameOpts(SORT_MAX));
   // The drawing buffer is only readable right after drawing, so grab thumbnails here.
   if (wantThumb) { wantThumb = false; thumbURL = grabThumb(); }
   dirty = false;
@@ -438,7 +443,7 @@ async function shoot() {
     if (mode === 'camera' && camera.ready) renderer.setSource(video, video.videoWidth, video.videoHeight);
     await new Promise(requestAnimationFrame);
     const [w, h] = exportSize();
-    const px = renderer.capture(w, h, frameOpts(EXPORT_SORT_MAX, false));
+    const px = renderer.capture(w, h, frameOpts(SORT_MAX, false));
     markDirty();
     const blob = await encode(px, w, h);
     const ext = blob.type === 'image/png' ? 'png' : 'jpg';

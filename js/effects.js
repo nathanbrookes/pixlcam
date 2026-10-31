@@ -59,11 +59,13 @@ vec3 fx(vec2 uv) {
     id: 'sort',
     name: 'Pixel Sort',
     custom: 'sort',
+    // Intensity = how wide a band of tones gets sorted (not opacity).
+    intensityDefault: 50,
     params: [
-      range('lo', 'Threshold low', 0, 100, 25),
-      range('hi', 'Threshold high', 0, 100, 80),
+      range('tone', 'Tones (dark ↔ light)', 0, 100, 50),
+      range('streak', 'Streak length', 2, 100, 18, { unit: '%' }),
+      range('ragged', 'Ragged edges', 0, 100, 50),
       range('angle', 'Direction', 0, 360, 90, { unit: '°' }),
-      range('span', 'Max streak', 1, 100, 100, { unit: '%' }),
       select('key', 'Sort by', ['Bright', 'Hue', 'Sat', 'Red', 'Green', 'Blue']),
       select('mask', 'Sort pixels', ['Inside', 'Outside']),
     ],
@@ -344,7 +346,7 @@ vec3 fx(vec2 uv) {
 ];
 
 // Every effect gets a universal Intensity (mix) slider first.
-for (const fx of EFFECTS) fx.params.unshift(range('mix', 'Intensity', 0, 100, 100, { unit: '%' }));
+for (const fx of EFFECTS) fx.params.unshift(range('mix', 'Intensity', 0, 100, fx.intensityDefault ?? 100, { unit: '%' }));
 
 export const EFFECTS_BY_ID = Object.fromEntries(EFFECTS.map((e) => [e.id, e]));
 
