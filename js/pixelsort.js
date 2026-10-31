@@ -259,11 +259,26 @@ export class PixelSort {
     const bandRows = Math.max(1, Math.min(lines, Math.floor(maxTexels / sx)));
     this.ensure(sx, bandRows);
 
-    // Intensity = how much gets sorted. Inside: the window of tones around Tone grows.
-    // Outside: the protected window shrinks. 50 ≈ the P4 camera's default.
+    // Intensity = how much gets sorted. Inside: a window of tones that grows (50 ≈ the P4
+    // camera's default, ±0.22); near the top its edges stretch out to pure black and white,
+    // so 100 sorts everything. Outside: the protected window shrinks to nothing.
+    // Tones slides the window between the darkest and lightest tones, always keeping all of
+    // it inside black…white so both ends of the slider sort a full band.
     const amt = p.mix / 100;
-    const center = p.tone / 100;
-    const half = p.mask === 1 ? 0.42 - 0.4 * amt : 0.02 + 0.4 * amt;
+    const tone = p.tone / 100;
+    let lo, hi;
+    if (p.mask === 1) {
+      const half = 0.44 * (1 - amt);
+      const center = half + (1 - 2 * half) * tone;
+      lo = center - half;
+      hi = center + half;
+    } else {
+      const half = 0.02 + 0.4 * amt;
+      const center = half + (1 - 2 * half) * tone;
+      const stretch = amt ** 6;
+      lo = (center - half) * (1 - stretch);
+      hi = center + half + (1 - (center + half)) * stretch;
+    }
     const shared = {
       ...common, u_major: major, u_rev: rev, u_num: num, u_lineOff: lineOff,
       u_len: len, u_Sx: sx, u_T: T, u_wrap: wrap, u_bandRows: bandRows,
@@ -277,7 +292,7 @@ export class PixelSort {
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbPrep);
       this.prep.use().set({
         ...shared, u_band: band, u_tex: inTex,
-        u_lo: center - half, u_hi: center + half, u_jit: (p.ragged / 100) * 0.25, u_invert: p.mask,
+        u_lo: lo, u_hi: hi, u_jit: (p.ragged / 100) * 0.25, u_invert: p.mask,
       });
       draw();
 

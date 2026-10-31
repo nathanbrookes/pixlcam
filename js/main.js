@@ -12,7 +12,6 @@ const el = (tag, cls, text) => {
   return n;
 };
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-const even = (v) => Math.max(2, Math.round(v / 2) * 2);
 
 const STORE_KEY = 'pixlcam:v1';
 // Frame shapes, written for portrait. In phone landscape they flip (3:4 → 4:3).
@@ -22,11 +21,12 @@ const ASPECTS = [
   { label: '9:16', v: 9 / 16 },
   { label: '4:3', v: 4 / 3 },
 ];
-// Preview long-edge cap per quality level.
+// Preview long-edge cap per quality level. The preview renders at screen pixels ÷ a whole
+// number under this cap; High is full screen resolution on phones.
 const QUALITY = {
   low: { label: 'Low', edge: 640 },
   med: { label: 'Medium', edge: 960 },
-  high: { label: 'High', edge: 1440 },
+  high: { label: 'High', edge: 1800 },
 };
 const EXPORT = { std: { label: 'Standard', edge: 2048 }, max: { label: 'Max', edge: 4096 } };
 // GPU memory budget for the pixel sort's working buffer (in pixels). Always sorts real
@@ -330,8 +330,14 @@ function previewSize() {
   if (rec) return rec.size; // keep the canvas size fixed while recording
   const a = aspectValue();
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
-  const long = Math.max(240, Math.min(Math.max(viewW, viewH) * dpr, QUALITY[state.quality].edge));
-  return a >= 1 ? [even(long), even(long / a)] : [even(long * a), even(long)];
+  // Render at the screen's pixel size divided by a whole number, and let CSS scale it up
+  // without smoothing (image-rendering: pixelated). Non-integer smooth upscaling blurs
+  // fine detail like pixel-sort streaks.
+  const device = Math.max(viewW, viewH) * dpr;
+  const k = Math.max(1, Math.ceil(device / QUALITY[state.quality].edge - 1e-6));
+  const long = Math.max(240, device / k);
+  const px = (v) => Math.max(2, Math.floor(v + 1e-6));
+  return a >= 1 ? [px(long), px(long / a)] : [px(long * a), px(long)];
 }
 
 function sourceCropSize() {
@@ -492,7 +498,8 @@ async function startRecording() {
   let canvasStream = null;
   let mic = null;
   try {
-    const size = previewSize();
+    // Video encoders (H.264) need even dimensions.
+    const size = previewSize().map((v) => Math.max(2, Math.floor(v / 2) * 2));
     canvasStream = canvas.captureStream(30);
     const tracks = [...canvasStream.getVideoTracks()];
     if (state.recordAudio) {

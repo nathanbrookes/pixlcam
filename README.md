@@ -10,7 +10,7 @@ Each effect has an **Intensity** slider plus its own options. Tap an effect chip
 | --- | --- |
 | **Glitch** | density, block size, displace, corrupt color, speed, seed |
 | **RGB Split** | distance, angle, mode (linear / radial / shake) |
-| **Pixel Sort** | intensity (how much of the image sorts), tones (dark ↔ light), streak length, ragged edges, direction (any angle), sort by (brightness/hue/sat/R/G/B), sort inside or outside the range. Modelled on the ESP32-P4 camera's sort: real pixels are moved at full resolution, with a per-row cutoff and streak length |
+| **Pixel Sort** | intensity (how much of the image sorts; 100 sorts everything), tones (which band of brightness, dark ↔ light), streak length, ragged edges, direction (any angle), sort by (brightness/hue/sat/R/G/B), sort inside or outside the range. Modelled on the ESP32-P4 camera's sort: real pixels are moved at full resolution, with a per-row cutoff and streak length |
 | **Pixelate** | size, shape (square / LED / halftone / LCD) |
 | **VHS** | wobble, line jitter, tracking band, color bleed, noise, speed |
 | **Dither** | pixel size, levels, pattern (Bayer 8/4, noise), palette (color, mono, Game Boy, amber, cyber, vapor, thermal) |
