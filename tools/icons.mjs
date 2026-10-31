@@ -429,6 +429,20 @@ function boxBlur(src, size, r) {
   return out;
 }
 
+// App-icon corner shape (iOS-style ~22% radius) as a size×size mask: 1 inside, 0 outside.
+export function roundedMask(size, radius = 0.2237) {
+  const r = size * radius;
+  const mask = new Uint8Array(size * size);
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const cx = x + 0.5;
+    const cy = y + 0.5;
+    const qx = clamp(cx, r, size - r);
+    const qy = clamp(cy, r, size - r);
+    mask[y * size + x] = Math.hypot(cx - qx, cy - qy) <= r ? 1 : 0;
+  }
+  return mask;
+}
+
 // Render a design spec to a square RGB bitmap (no corner rounding — the OS does that).
 export function renderIcon(spec, size) {
   const { art, bg = '#0b0b12', fill = 0.8, scan = 0, led = 0, glow = 0 } = spec;
